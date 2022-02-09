@@ -1,5 +1,5 @@
 import csv
-import matplotlib.pyplot as plot
+import matplotlib.pyplot as plt
 
 stationList = []
 
@@ -7,7 +7,7 @@ class stationInfo():
     def __init__(self, name):
         self.name = name
         self.averageMax, self.averageMin, self.maxTemp, self.minTemp = 0, 0, 0, 0
-        self.info{
+        self.info = {
             "Max" : [],
             "Min" : [],
             "Humidity" : [],
@@ -39,11 +39,14 @@ class stationInfo():
     
     def findMin(self, infoName):
         theMin = 0
-        for data in self self.info[infoName]:
+        for data in self.info[infoName]:
             if data != "":
                 if theMin == 0 or data < theMin:
                     theMin = data
         return theMin
+
+    def findAverage(self, infoName):
+        dataAmmount = 0
 
     def printInfo(self):
         print(f"The highest temp for {self.name} station was {round(self.maxTemp, 2)}. ")
@@ -82,3 +85,25 @@ with open('2016VizData.csv', newline='') as csvfile:
                 station.addData("WindMin", windMin, (-80, 120))
                 station.addData("Rain", rain, (-80, 120))
                 station.months.append(row["MONTH"])
+
+name = input("hello, what is your name? ")
+print(f"hello {name}")
+while True:
+    print(f"what data would yyou like to see")
+    data = input("Max, Min, Humidity, WindMax, WindMin, Rain")
+    time = input(f"For what time do you want to see the info (month number, year)? ")
+    print("ok, here is the graph. ")
+
+    for station in stationList:
+        dataList = station.cleanInfo(data)
+        try:
+            if int(time) in range(11):
+                newDataList = station.findMonth(int(time) + 1, dataList)
+                station.ployInfo(newDataList)
+            else:
+                station.plotInfo(dataList)
+        except:
+            station.plotInfo(dataList)
+
+    plot.legend()    
+    plot.show()
