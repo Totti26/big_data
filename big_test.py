@@ -1,7 +1,7 @@
 import csv
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plot
 
-stationList = []
+stations = []
 
 class stationInfo():
     def __init__(self, name):
@@ -17,36 +17,33 @@ class stationInfo():
         }
         self.months = []
 
-    def cleanData(self, value, limits):
+    def firstData(self, value, limits):
         if value > limits[1] or value < limits[0]:
             return False
         else:
             return True
 
     def addData(self, infoName, data, limits):
-        if self.cleanData(data, limits):
+        if self.firstData(data, limits):
             self.info[infoName].append(data)
         else:
             self.info[infoName].append("")
 
-    def findMax(self, infoName):
-        theMax = 0 
+    def calcMax(self, infoName):
+        Max = 0 
         for data in self.info[infoName]:
             if data != "":
-                if theMax == 0 or data > theMax:
-                    theMax = data
-        return theMax
+                if Max == 0 or data > Max:
+                    Max = data
+        return Max
     
-    def findMin(self, infoName):
-        theMin = 0
+    def calcMin(self, infoName):
+        Min = 0
         for data in self.info[infoName]:
             if data != "":
-                if theMin == 0 or data < theMin:
-                    theMin = data
-        return theMin
-
-    def findAverage(self, infoName):
-        dataAmmount = 0
+                if Min == 0 or data < Min:
+                    Min = data
+        return Min
 
     def printInfo(self):
         print(f"The highest temp for {self.name} station was {round(self.maxTemp, 2)}. ")
@@ -67,16 +64,16 @@ with open('2016VizData.csv', newline='') as csvfile:
 
         currentStation = row["STID"]
         i = 0
-        if len(stationList) == 0:
-            stationList.append(stationInfo(currentStation))
-        for station in stationList:
+        if len(stations) == 0:
+            stations.append(stationInfo(currentStation))
+        for station in stations:
             i += 1
             if station.name == currentStation:
                 break
             else:
-                if i >= len(stationList):
-                    stationList.append(stationInfo(currentStation))
-        for station in stationList:
+                if i >= len(stations):
+                    stations.append(stationInfo(currentStation))
+        for station in stations:
             if station.name == currentStation:
                 station.addData("Max", max, (-80, 120))
                 station.addData("Min", min, (-80, 120))
@@ -85,25 +82,28 @@ with open('2016VizData.csv', newline='') as csvfile:
                 station.addData("WindMin", windMin, (-80, 120))
                 station.addData("Rain", rain, (-80, 120))
                 station.months.append(row["MONTH"])
-
-name = input("hello, what is your name? ")
-print(f"hello {name}")
+                
+name = input('Hello, what is your name? ')
+print(f'hello {name}')
 while True:
-    print(f"what data would yyou like to see")
-    data = input("Max, Min, Humidity, WindMax, WindMin, Rain")
-    time = input(f"For what time do you want to see the info (month number, year)? ")
-    print("ok, here is the graph. ")
+    print(f'what data would you like to see? ')
+    data = input('Max, Min, Humidity, WindMax, WindMin, Rain')
+    time = input(f'and for what time would you like to see that info (month name, year)')
+    print('ok, here is your graph')
 
-    for station in stationList:
+    for station in stations:
         dataList = station.cleanInfo(data)
         try:
             if int(time) in range(11):
                 newDataList = station.findMonth(int(time) + 1, dataList)
-                station.ployInfo(newDataList)
+                station.plotInfo(newDataList)
             else:
                 station.plotInfo(dataList)
         except:
             station.plotInfo(dataList)
-
-    plot.legend()    
+                
+    plot.legend()
     plot.show()
+
+    break
+
